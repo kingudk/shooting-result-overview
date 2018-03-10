@@ -8,4 +8,5 @@ Stuff that is planned to be adressed:
 - Tweaking of layout
 - Error handling
 - General code clean up
-- Addition of a proper log framework (rather than just spamming stdout). 
+- Addition of a proper log framework (rather than just spamming stdout).
+- Addition of unit tests 
