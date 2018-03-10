@@ -60,15 +60,11 @@ public class MyUI extends UI {
         Label headline = new Label("<b>Vælg resultat fra listen</b>", ContentMode.HTML);
         
         DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("da", "dk"));
-//        DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMAN);
-
         Grid<ResultFile> resultGrid  = new Grid<>();
         resultGrid.addColumn(ResultFile::getResultDate).setCaption("Dato").setRenderer(new DateRenderer(df));
         resultGrid.addColumn(ResultFile::getLaneNumber).setCaption("Bane #");
         resultGrid.addColumn(ResultFile::getShooterName).setCaption("Skytte");
         resultGrid.setSelectionMode(SelectionMode.SINGLE);
-        
-
         
         ResultWatch watcher = new ResultWatch(watchFolder);
         GridDataSink gridData = new GridDataSink(watcher, ui);
