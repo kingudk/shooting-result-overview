@@ -155,7 +155,7 @@ public class ResultWatch {
 				        	System.out.println("Got modift entry event");
 				        }
 			        }
-
+			        processNotifications();
 			    }
 
 			    // Reset the key -- this step is critical if you want to

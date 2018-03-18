@@ -67,6 +67,7 @@ public class MyUI extends UI {
         resultGrid.setSelectionMode(SelectionMode.SINGLE);
         
         ResultWatch watcher = new ResultWatch(watchFolder);
+        watcher.watch();
         GridDataSink gridData = new GridDataSink(watcher, ui);
         resultGrid.setDataProvider(gridData.getDataProvider());
         resultGrid.setWidth("480px");
