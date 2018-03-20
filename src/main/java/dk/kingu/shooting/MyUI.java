@@ -28,7 +28,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.renderers.Renderer;
-
+import com.vaadin.ui.themes.ValoTheme;
 
 import pl.pdfviewer.PdfViewer;
 
@@ -71,8 +71,11 @@ public class MyUI extends UI {
         GridDataSink gridData = new GridDataSink(watcher, ui);
         resultGrid.setDataProvider(gridData.getDataProvider());
         resultGrid.setWidth("480px");
+        
+        final Button reloadPage = new Button("Gen-indlæs");
+        reloadPage.setEnabled(true);
 
-        resultChooserLayout.addComponents(headline, /*fileList,*/ resultGrid);
+        resultChooserLayout.addComponents(headline, resultGrid, reloadPage);
         resultChooserLayout.setWidth("500px");
         mainLayout.addComponent(resultChooserLayout);
         
@@ -89,6 +92,7 @@ public class MyUI extends UI {
         
         final Button print = new Button("Print");
         print.setEnabled(true);
+        print.setStyleName(ValoTheme.BUTTON_PRIMARY);
         buttonContainer.addComponent(print);
    
         print.addClickListener(e -> {
@@ -116,6 +120,10 @@ public class MyUI extends UI {
 
         	System.out.println("Print button clicked for file: " + selectedFile);
         });    
+        
+        reloadPage.addClickListener(e -> {
+        	Page.getCurrent().reload();
+        });
         
         pdfContainer.addComponent(pdfViewer);
         mainLayout.addComponent(pdfContainer);
