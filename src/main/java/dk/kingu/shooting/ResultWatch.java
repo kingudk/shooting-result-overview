@@ -147,12 +147,12 @@ public class ResultWatch {
 				        
 				        if(kind == ENTRY_CREATE) {
 				        	System.out.println("Got new entry event");
-				        	addResult(filename);
 				        } else if(kind == ENTRY_DELETE) {
 				        	System.out.println("Got delete entry event");
 				        	removeResult(filename);
 				        } else if(kind == ENTRY_MODIFY) {
 				        	System.out.println("Got modift entry event");
+				        	addResult(filename);
 				        }
 			        }
 			        processNotifications();
