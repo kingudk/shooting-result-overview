@@ -39,7 +39,14 @@ public class ResultFileProcessor {
             	laneNumber = 0;
             } else {
                 shooterID = fragments[0];
-                laneNumber = Integer.parseInt(fragments[1].trim());
+                String frag = fragments[1].trim();
+                String numberString;
+                if(frag.contains(" ")) {
+                	numberString = frag.split(" ")[0];
+                } else {
+                	numberString = frag;
+                }                
+                laneNumber = Integer.parseInt(numberString);
             }
             
         } catch (InvalidPasswordException e) {
