@@ -71,6 +71,7 @@ public class MyUI extends UI {
         GridDataSink gridData = new GridDataSink(watcher, ui);
         resultGrid.setDataProvider(gridData.getDataProvider());
         resultGrid.setWidth("480px");
+        resultGrid.setHeightByRows(20);
         
         final Button reloadPage = new Button("Gen-indlæs");
         reloadPage.setEnabled(true);
@@ -80,7 +81,7 @@ public class MyUI extends UI {
         mainLayout.addComponent(resultChooserLayout);
         
         VerticalLayout pdfContainer = new VerticalLayout(); 
-        pdfContainer.setWidth("1200px");
+        pdfContainer.setWidth("1300px");
 
         File pdf = new File("/tmp/Kontoplan.pdf");
         PdfViewer pdfViewer = new PdfViewer(pdf);
