@@ -114,8 +114,12 @@ public class ResultWatch {
 	
 	protected void addResult(Path filename) {
 		try {
-			ResultFile result = buildResultFile(filename);
-			results.put(filename.getFileName().toString(), result);
+			if(filename.toString().endsWith(".pdf")) {
+				ResultFile result = buildResultFile(filename);
+				results.put(filename.getFileName().toString(), result);
+			} else {
+				System.err.println("Filename did not end in .pdf, not processing");
+			}
 		} catch (IOException e) {
 			System.err.println("Failed to add result, due to: " + e);
 		}

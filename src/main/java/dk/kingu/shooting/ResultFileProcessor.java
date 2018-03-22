@@ -39,14 +39,7 @@ public class ResultFileProcessor {
             	laneNumber = 0;
             } else {
                 shooterID = fragments[0];
-                String frag = fragments[1].trim();
-                String numberString;
-                if(frag.contains(" ")) {
-                	numberString = frag.split(" ")[0];
-                } else {
-                	numberString = frag;
-                }                
-                laneNumber = Integer.parseInt(numberString);
+                laneNumber = extractLaneNumber(fragments[1]);
             }
             
         } catch (InvalidPasswordException e) {
@@ -56,6 +49,22 @@ public class ResultFileProcessor {
 		}
 		
 		processed = true;
+	}
+	
+	public static int extractLaneNumber(String laneNumberString) {
+		int laneNumber;
+        String frag = laneNumberString.trim();
+		if(frag.matches("[^0-9]+")) {
+			laneNumber = -1;
+			System.err.println("Got a PDF file that did not have a parseable lane number line");
+		} else {
+	        if(frag.contains(" ")) {
+	        	laneNumber = Integer.parseInt(frag.split(" ")[0]);
+	        } else {
+	        	laneNumber = Integer.parseInt(frag);
+	        }              
+	    }
+        return laneNumber;
 	}
 	
 	public int getLaneNumber() {
