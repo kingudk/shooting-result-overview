@@ -8,8 +8,11 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.text.PDFTextStripperByArea;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResultFileProcessor {
+    private static Logger log = LoggerFactory.getLogger(ResultFileProcessor.class);
 
 	final Path pdfFile;
 	boolean processed = false;
@@ -21,7 +24,6 @@ public class ResultFileProcessor {
 	}
 	
 	public void process() {
-		
         try (PDDocument document = PDDocument.load(pdfFile.toFile())) {
             PDFTextStripperByArea stripper = new PDFTextStripperByArea();
             stripper.setSortByPosition( true );
@@ -34,7 +36,7 @@ public class ResultFileProcessor {
             String fragments[] = text.split("\n");
             
             if(fragments.length != 2) {
-            	System.out.println("Didn't find two fragments in text in document " + pdfFile);
+            	log.info("Didn't find two fragments in text in document {}", pdfFile);
             	shooterID = "Ukendt";
             	laneNumber = 0;
             } else {
@@ -43,9 +45,9 @@ public class ResultFileProcessor {
             }
             
         } catch (InvalidPasswordException e) {
-			e.printStackTrace();
+			log.error("Error trying to read file {} (password protected?)", pdfFile, e);
 		} catch (IOException e) {
-			e.printStackTrace();
+		    log.error("IO failure processing file {}", pdfFile, e);
 		}
 		
 		processed = true;
@@ -56,7 +58,7 @@ public class ResultFileProcessor {
         String frag = laneNumberString.trim();
 		if(frag.matches("[^0-9]+")) {
 			laneNumber = -1;
-			System.err.println("Got a PDF file that did not have a parseable lane number line");
+			log.info("Got a PDF file that did not have a parseable lane number line");
 		} else {
 	        if(frag.contains(" ")) {
 	        	laneNumber = Integer.parseInt(frag.split(" ")[0]);

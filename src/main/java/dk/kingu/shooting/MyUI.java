@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.annotation.WebServlet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
@@ -27,7 +29,6 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.renderers.DateRenderer;
-import com.vaadin.ui.renderers.Renderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 import pl.pdfviewer.PdfViewer;
@@ -43,8 +44,11 @@ import pl.pdfviewer.PdfViewer;
 @Push
 public class MyUI extends UI {
 
+    private static Logger log = LoggerFactory.getLogger(MyUI.class);
+    
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        log.info("Initializing UI");
         Path watchFolder = getPDFDir();
         final String printerName = getPrinterName();
         UI ui = getUI();     
@@ -108,18 +112,17 @@ public class MyUI extends UI {
 	        				Notification.Type.HUMANIZED_MESSAGE);
 	        		notice.setDelayMsec(5000);
 	        		notice.show(Page.getCurrent());
-	        		System.out.println("Printjob sent to printer");
+	        		log.info("Printjob sent to printer for file '{}'", file.toString());
 	        	} else {
 	        		Notification notice = new Notification("Udskrift", "Udskrift mislykkedes", 
 	        				Notification.Type.ERROR_MESSAGE);
 	        		notice.setDelayMsec(5000);
-	        		System.out.println("failed to print job");
+	        		log.warn("Failed to send print job to printer for file '{}'", file.toString());
 	        	}
-			} catch (IOException | InterruptedException e1) {
-				System.out.println("ERR!!");
+			} catch (IOException | InterruptedException ex) {
+			    log.error("Error printing job for file '{}'", file.toString(), ex);
 			}
-
-        	System.out.println("Print button clicked for file: " + selectedFile);
+			log.debug("Print button clicked for file: {}", selectedFile);
         });    
         
         reloadPage.addClickListener(e -> {
@@ -147,10 +150,10 @@ public class MyUI extends UI {
        
     private static String getPrinterName() {
     	String printerName = System.getProperty("PRINTER");
-    	System.out.println("Read PRINTER env got: '" + printerName + "'");
+    	log.debug("Read PRINTER env got: '{}'", printerName);
     	
         if(printerName == null || printerName.isEmpty()) {
-        	System.out.print("PRINTER is not set, failing");
+            log.error("PRINTER is not set, failing");
         	throw new RuntimeException("PRINTER was not set!");
         }
     	
@@ -159,16 +162,16 @@ public class MyUI extends UI {
     
     private static Path getPDFDir() {
         String pdfDir = System.getProperty("PDF_DIR");
-        System.out.println("Read PDF_DIR env got: '" + pdfDir + "'");
+        log.debug("Read PDF_DIR env got: '{}'", pdfDir);
 
         if(pdfDir == null || pdfDir.isEmpty()) {
-        	System.out.print("PDF_DIR is not set, failing");
+        	log.error("PDF_DIR is not set, failing");
         	throw new RuntimeException("PDF_DIR was not set!");
         }
         
         Path watchFolder = Paths.get(pdfDir);
         if(!(watchFolder.toFile().isDirectory() && watchFolder.toFile().canRead())) {
-        	System.out.print("PDF_DIR (" + pdfDir + ") was either not a directory or not readable, failing");
+        	log.error("PDF_DIR ({}) was either not a directory or not readable, failing", pdfDir);
         	throw new RuntimeException("Could not read " + pdfDir + " !");
         }
         return watchFolder;

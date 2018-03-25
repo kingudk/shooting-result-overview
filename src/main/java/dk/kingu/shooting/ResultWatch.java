@@ -27,10 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.ui.UI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResultWatch {
+    private Logger log = LoggerFactory.getLogger(getClass());
 
 	WatchService watcher;
 	WatchKey key;
@@ -46,16 +47,15 @@ public class ResultWatch {
 			results = new HashMap<>();
 			watcher = FileSystems.getDefault().newWatchService();
 			this.watchedFolder = watchedFolder;
-			System.out.println("Watching: " + watchedFolder);
+			log.info("Watching: {}", watchedFolder);
 			key = watchedFolder.register(watcher,
 	                ENTRY_CREATE,
 	                ENTRY_DELETE,
 	                ENTRY_MODIFY);
-
 			
 			initialize();
 		} catch (IOException e) {
-			System.err.println("Ran into an issuwatchedFoldere creating FolderWatch: " + e);
+			log.error("Ran into an issue when creating FolderWatch", e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -68,8 +68,8 @@ public class ResultWatch {
 		    		files.add(file.toFile());
 		    	}
 		    }
-		} catch (IOException | DirectoryIteratorException x) {
-		    System.err.println(x);
+		} catch (IOException | DirectoryIteratorException e) {
+		    log.error("Error initializing ResultWatch", e);
 		}
 		Collections.sort(files, Comparator.comparing(File::lastModified));
 		Collections.reverse(files);
@@ -118,10 +118,10 @@ public class ResultWatch {
 				ResultFile result = buildResultFile(filename);
 				results.put(filename.getFileName().toString(), result);
 			} else {
-				System.err.println("Filename did not end in .pdf, not processing");
+				log.info("File ({}) did not end in .pdf, not processing", filename);
 			}
 		} catch (IOException e) {
-			System.err.println("Failed to add result, due to: " + e);
+			log.error("Failed to add result for file ({})", filename, e);
 		}
 	}
 	
@@ -150,12 +150,12 @@ public class ResultWatch {
 				        Path filename = ev.context();
 				        
 				        if(kind == ENTRY_CREATE) {
-				        	System.out.println("Got new entry event");
+				        	log.debug("Got new entry event for file {}", filename);
 				        } else if(kind == ENTRY_DELETE) {
-				        	System.out.println("Got delete entry event");
+				            log.debug("Got delete entry event for file {}", filename);
 				        	removeResult(filename);
 				        } else if(kind == ENTRY_MODIFY) {
-				        	System.out.println("Got modift entry event");
+				            log.debug("Got modift entry event for file {}", filename);
 				        	addResult(filename);
 				        }
 			        }
