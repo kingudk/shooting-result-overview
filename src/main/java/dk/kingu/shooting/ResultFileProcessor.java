@@ -60,11 +60,15 @@ public class ResultFileProcessor {
 			laneNumber = -1;
 			log.info("Got a PDF file that did not have a parseable lane number line");
 		} else {
-	        if(frag.contains(" ")) {
-	        	laneNumber = Integer.parseInt(frag.split(" ")[0]);
-	        } else {
-	        	laneNumber = Integer.parseInt(frag);
-	        }              
+		    try {
+    	        if(frag.contains(" ")) {
+    	        	laneNumber = Integer.parseInt(frag.split(" ")[0]);
+    	        } else {
+    	        	laneNumber = Integer.parseInt(frag);
+    	        }    
+		    } catch (NumberFormatException e) {
+		        laneNumber = -1;
+		    }
 	    }
         return laneNumber;
 	}
